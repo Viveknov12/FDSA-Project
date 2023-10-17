@@ -1,0 +1,110 @@
+#include <iostream>
+#include <stack>
+#include <queue>
+#include <string>
+
+int main() {
+    std::stack<std::string> backwardStack;
+    std::queue<std::string> forwardQueue;
+    std::string CurrentPage = "https://www.google.com";
+
+    while (true) {
+        std::cout << "Simple Web Browser Simulation" << std::endl;
+        std::cout << "1. Visit a New URL" << std::endl;
+        std::cout << "2. Go Back" << std::endl;
+        std::cout << "3. Go Forward" << std::endl;
+        std::cout << "4. Exit" << std::endl;
+
+        std::cout << "Current Page: " << CurrentPage << std::endl;
+
+        // Display elements in the backwardStack
+        std::cout << "Elements in Stack:\n";
+        std::stack<std::string> backwardStack_copy = backwardStack;
+        while (!backwardStack_copy.empty()) {
+            std::cout << backwardStack_copy.top() << " ";
+            backwardStack_copy.pop();
+        }
+        std::cout << "\n";
+
+        // Display elements in the forwardQueue
+        std::cout << "Elements in Queue:\n";
+        std::queue<std::string> forwardQueue_copy = forwardQueue;
+        while (!forwardQueue_copy.empty()) {
+            std::cout << forwardQueue_copy.front() << " ";
+            forwardQueue_copy.pop();
+        }
+        std::cout << "\n";
+
+        if (!backwardStack.empty()) {
+            std::cout << "Top of Stack (Backward): " << backwardStack.top() << std::endl;
+        } else {
+            std::cout << "Top of Stack (Backward): None" << std::endl;
+        }
+
+        if (!forwardQueue.empty()) {
+            std::cout << "Front of Queue (Forward): " << forwardQueue.front() << std::endl;
+        } else {
+            std::cout << "Front of Queue (Forward): None" << std::endl;
+        }
+
+        std::cout << "Enter your choice: ";
+
+        int choice;
+        std::cin >> choice;
+
+        switch (choice) {
+            case 1: // Visit a New Page
+                {
+                    std::string newUrl;
+                    std::cout << "Enter the URL of the page you want to visit: ";
+                    std::cin.ignore(); // Clear input buffer
+                    std::getline(std::cin, newUrl);
+
+                    // Push the current page to the backwardStack and set CurrentPage to the new URL
+                    backwardStack.push(CurrentPage);
+                    CurrentPage = newUrl;
+                    std::cout << "Visited " << newUrl << std::endl;
+
+                    // Clear the forward queue as we are navigating to a new page
+                    while (!forwardQueue.empty()) {
+                        forwardQueue.pop();
+                    }
+                }
+                break;
+
+            case 2: // Go Back
+                if (!backwardStack.empty()) {
+                    // Push the current page to the forwardQueue
+                    forwardQueue.push(CurrentPage);
+                    CurrentPage = backwardStack.top();
+                    backwardStack.pop();
+                    std::cout << "Went back to " << CurrentPage << std::endl;
+                } else {
+                    std::cout << "No previous pages to go back to." << std::endl;
+                }
+                break;
+
+            case 3: // Go Forward
+                if (!forwardQueue.empty()) {
+                    // Push the current page to the backwardStack
+                    backwardStack.push(CurrentPage);
+                    CurrentPage = forwardQueue.front();
+                    forwardQueue.pop();
+                    std::cout << "Went forward to " << CurrentPage << std::endl;
+                } else {
+                    std::cout << "No forward pages to go." << std::endl;
+                }
+                break;
+
+            case 4: // Exit
+                std::cout << "Exiting, Goodbye!" << std::endl;
+                return 0;
+
+            default:
+                std::cout << "Invalid choice. Please try again." << std::endl;
+                break;
+        }
+    }
+
+    return 0;
+}
