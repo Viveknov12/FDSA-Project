@@ -1,0 +1,79 @@
+//FAMILY NODE CODE
+class FamilyNode
+{
+public:
+    string name;
+    string occupation;
+    int age;
+    int income;
+    vector<FamilyNode *> children;
+
+    FamilyNode(string n, string occ, int a, int inc)
+        : name(n), occupation(occ), age(a), income(inc) {}
+};
+
+
+//BUILD TREE CODE
+FamilyNode *buildTree()
+{
+    string name, occupation;
+    int age, income;
+
+    cout << "Enter name of member: ";
+    cin >> name;
+
+    cout << "Enter occupation of " << name << ": ";
+    cin >> occupation;
+
+    cout << "Enter age of " << name << ": ";
+    cin >> age;
+
+    cout << "Enter income of " << name << ": ";
+    cin >> income;
+
+    int numOfChildren;
+    cout << "Enter number of children for " << name << ": ";
+    cin >> numOfChildren;
+
+    FamilyNode *node = new FamilyNode(name, occupation, age, income);
+
+    for (int i = 0; i < numOfChildren; i++)
+    {
+        node->children.push_back(buildTree()); // Recursively build the tree for children
+    }
+
+    return node;
+}
+
+//PRINT UNIQUE OCCUPATION MEMBER
+void printUniqueOccupationMember(FamilyNode *node, map<string, int> &occupationToCount)
+{
+    if (node == nullptr)
+        return;
+
+    occupationToCount[node->occupation]++;
+
+    for (FamilyNode *child : node->children)
+    {
+        printUniqueOccupationMember(child, occupationToCount);
+    }
+}
+
+void printUniqueOccupationMember(vector<FamilyNode *> &familyTrees)
+{
+    for (FamilyNode *root : familyTrees)
+    {
+        map<string, int> occupationToCount;
+        printUniqueOccupationMember(root, occupationToCount);
+
+        for (const auto &entry : occupationToCount)
+        {
+            if (entry.second == 1)
+            {
+                cout << "Member with a unique occupation: " << entry.first << endl;
+            }
+        }
+    }
+}
+
+
