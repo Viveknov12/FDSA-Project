@@ -77,3 +77,118 @@ void printUniqueOccupationMember(vector<FamilyNode *> &familyTrees)
 }
 
 
+//RICHEST IN THE FAMILY
+
+FamilyNode *findRichestInFamily(FamilyNode *root)
+{
+  FamilyNode *richest = root;
+  for (FamilyNode *child : root->children)
+  {
+    FamilyNode *richestChild = findRichestInFamily(child);
+    if (richestChild->income > richest->income)
+    {
+      richest = richestChild;
+    }
+  }
+  return richest;
+}
+
+
+//RICHEST INDIVIDUAL IN EACH GENERATION
+void printRichestIndividualEachGeneration(vector<FamilyNode *> &familyTrees)
+{
+  for (int i = 0; i < familyTrees.size(); i++)
+  {
+    FamilyNode *richest = findRichestInFamily(familyTrees[i]);
+    cout << "Richest individual in the family of " << familyTrees[i]->name << " is " << richest->name << " with an income of " << richest->income << endl;
+  }
+}
+
+//CALCULATING DIVERSITY SCORE
+
+int calculateDiversityScore(FamilyNode *root)
+{
+  set<string> uniqueOccupations;
+  for (FamilyNode *child : root->children)
+  {
+    uniqueOccupations.insert(child->occupation);
+  }
+  return uniqueOccupations.size();
+}
+
+
+//FINDING DIVERSE FAMILY
+
+FamilyNode *getDiverseFamily(vector<FamilyNode *> &familyTrees)
+{
+  FamilyNode *result = nullptr;
+  int maxDiversityScore = -1;
+
+  for (int i = 0; i < familyTrees.size(); i++)
+  {
+    int diversityScore = calculateDiversityScore(familyTrees[i]);
+    if (diversityScore > maxDiversityScore)
+    {
+      maxDiversityScore = diversityScore;
+      result = familyTrees[i];
+    }
+  }
+
+  return result;
+}
+
+
+//INT MAIN BEGINS
+int main()
+{
+  int numOfFamilies;
+  cout << "Enter the number of families: ";
+  cin >> numOfFamilies;
+
+  vector<FamilyNode *> familyTrees;
+
+  for (int i = 0; i < numOfFamilies; i++)
+  {
+    familyTrees.push_back(buildTree());
+  }
+
+  while (true)
+  {
+    int choice;
+    cout << "1. Find Member with Unique Occupation" << endl;
+    cout << "2. Find Average income per Age group" << endl;
+    cout << "3. Find Richest Individual of Each Generation" << endl;
+    cout << "4. Print Family(Ancestor) Name which is most diverse" << endl;
+    cout << "5. Exit" << endl;
+    cout << "Enter your choice: ";
+    cin >> choice;
+
+    switch (choice)
+    {
+    case 1:
+      printUniqueOccupationMember(familyTrees);
+      break;
+    case 2:
+      printAverageIncomePerAgeGroup(familyTrees);
+      break;
+    case 3:
+      printRichestIndividualEachGeneration(familyTrees);
+      break;
+    case 4:
+    {
+      FamilyNode *result = getDiverseFamily(familyTrees);
+      cout << "Family of ancestor named " << result->name << " is most diverse" << endl;
+      break;
+    }
+    case 5:
+      return 0;
+    default:
+      cout << "Incorrect choice!!!" << endl;
+    }
+  }
+
+  return 0;
+}
+
+
+
